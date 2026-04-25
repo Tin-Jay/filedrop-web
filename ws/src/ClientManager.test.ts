@@ -7,9 +7,13 @@ import {
   type TargetedMessageModel,
 } from '@filedrop/types';
 
-import { ClientManager } from '../src/ClientManager.js';
-import type { Client } from '../src/types/Client.js';
-import { generateClientName } from '../src/utils/name.js';
+import { ClientManager } from './ClientManager.js';
+import * as config from './config.js';
+import type { Client } from './types/Client.js';
+import { generateClientName } from './utils/name.js';
+
+vitest.spyOn(config, 'requireCrypto', 'get').mockReturnValue(false);
+
 export class TestClient implements Client {
   clientName = generateClientName();
   readonly firstSeen = new Date();

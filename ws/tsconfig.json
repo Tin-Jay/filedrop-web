@@ -14,7 +14,8 @@
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "types": ["vitest/globals"]
   },
   "include": ["src"]
 }
