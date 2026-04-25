@@ -4,6 +4,7 @@
   top: 0;
   left: 0;
   right: 0;
+  bottom: 0;
   z-index: 10000;
   padding: 30px;
   backdrop-filter: blur(5px);
@@ -11,6 +12,7 @@
 
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
 }
 
@@ -19,20 +21,22 @@
   width: 100%;
   max-width: 700px;
   margin-block-start: 100px;
+  background: var(--color-bg-soft);
+  border-radius: 5px;
 }
 
 .title {
-  background: var(--color-bg-soft);
-  padding: 15px;
+  padding: 10px 15px;
   position: relative;
-  border-radius: 5px;
-  margin-block-end: 1rem;
+  border-block-end: 1px solid var(--color-primary);
 
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   button {
+    right: -0.4rem;
+
     svg {
       font-size: 2rem;
     }

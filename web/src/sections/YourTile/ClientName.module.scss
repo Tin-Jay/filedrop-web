@@ -1,6 +1,12 @@
-.clientName {
+.wrapper {
+  height: 100%;
+}
+
+.name {
   display: flex;
   align-items: center;
+  height: 100%;
+  margin-inline-end: -15px;
 
   button {
     svg {
@@ -11,16 +17,26 @@
   }
 
   input {
-    padding: 5px 10px;
+    flex: 1;
+    background: none;
+    outline: none !important;
+    padding: 10px 0;
   }
 
-  .view,
-  .edit {
-    display: flex;
-    align-items: center;
-  }
-
-  .view {
+  &.view {
     cursor: pointer;
+  }
+
+  &.edit {
+    background: var(--color-primary);
+    color: var(--color-fg);
+    border-radius: 5px;
+    padding: 0 10px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .name {
+    display: inline-flex;
   }
 }

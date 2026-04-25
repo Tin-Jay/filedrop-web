@@ -80,7 +80,6 @@ button {
   font-weight: bold;
   cursor: pointer;
   font-size: 14px;
-  text-shadow: none;
 }
 
 * {
@@ -110,21 +109,13 @@ input {
   border-radius: 5px;
 }
 
-h1,
-h2,
-h3,
-.subsection {
-  text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.75);
-}
-
 h1 {
   margin: 0;
 }
 
 h2,
 h3 {
-  text-transform: uppercase;
-  letter-spacing: 3px;
+  font-weight: 500;
   margin: 0;
 }
 

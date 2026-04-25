@@ -17,9 +17,7 @@ export const YourTileSection: React.FC = observer(() => {
     <div className="subsection">
       <div className={styles.you}>
         {client ? <TargetTile variant="medium" client={client} /> : <div></div>}
-        <div className={styles.info}>
-          <ClientName />
-        </div>
+        <ClientName />
         <div className={clsx(styles.actions, 'mobileHidden')}>
           <IconButton onClick={() => applicationStore.openModal('connect')} title={t('tabs.connect')}>
             <IoQrCode />
