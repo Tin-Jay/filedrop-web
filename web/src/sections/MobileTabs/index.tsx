@@ -10,6 +10,8 @@ import { NotificationCount } from '../../components/NotificationCount.js';
 export const MobileTabs: React.FC = observer(() => {
   return (
     <div className={styles.tabs} role="tablist">
+      {/* This is a hack to get Safari's toolbar to have the proper background color. */}
+      <div className={styles.background} />
       <Tab id="transfers">
         <NotificationCount count={networkStore.incomingTransfers.length} />
         <IoHome />

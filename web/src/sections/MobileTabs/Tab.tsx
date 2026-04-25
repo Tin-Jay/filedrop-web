@@ -23,6 +23,7 @@ export const Tab: React.FC<React.PropsWithChildren<Props>> = observer(
         className={clsx(styles.tab, { [styles.active]: isActive })}
         onClick={() => runInAction(() => (applicationStore.tab = id))}
         role="tab"
+        type="button"
         title={title}
       >
         <span>{children}</span>

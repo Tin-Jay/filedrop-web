@@ -54,7 +54,14 @@ body {
   overflow: hidden;
   position: fixed;
   inset: 0;
+  overscroll-behavior: none;
+}
+
+html,
+body,
+#root {
   height: 100%;
+  margin: 0;
   touch-action: none;
 }
 
@@ -74,14 +81,6 @@ button {
   cursor: pointer;
   font-size: 14px;
   text-shadow: none;
-}
-
-html,
-body,
-#root {
-  height: 100%;
-  margin: 0;
-  touch-action: none;
 }
 
 * {
