@@ -23,6 +23,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
+      - run: npm install -g corepack@latest --force
       - run: corepack yarn install
       - run: corepack yarn build
       - run: corepack yarn test
