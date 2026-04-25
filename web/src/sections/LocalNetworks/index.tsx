@@ -1,11 +1,10 @@
-import React from 'react';
 import clsx from 'clsx';
 import { observer } from 'mobx-react-lite';
-
-import styles from './index.module.scss';
+import type React from 'react';
 import { Link } from '../../components/Link.js';
-import { applicationStore, networkStore } from '../../stores/index.js';
 import { TargetTile } from '../../components/TargetTile.js';
+import { applicationStore, networkStore } from '../../stores/index.js';
+import styles from './index.module.scss';
 
 export const LocalNetworks: React.FC = observer(() => {
   const networks = networkStore.otherNetworks;
@@ -15,7 +14,7 @@ export const LocalNetworks: React.FC = observer(() => {
 
   return (
     <div className={clsx(styles.list)}>
-      {networks.map(network => (
+      {networks.map((network) => (
         <Link
           to={`/${network.name}`}
           key={network.name}
@@ -27,12 +26,8 @@ export const LocalNetworks: React.FC = observer(() => {
         >
           <span>{network.name}</span>
           <div className={styles.clients}>
-            {network.clients.map(client => (
-              <TargetTile
-                variant="small"
-                key={client.clientId}
-                client={client}
-              />
+            {network.clients.map((client) => (
+              <TargetTile variant="small" key={client.clientId} client={client} />
             ))}
           </div>
         </Link>

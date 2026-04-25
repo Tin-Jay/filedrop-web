@@ -1,18 +1,10 @@
-import React from 'react';
+import type React from 'react';
 import { useTranslation } from 'react-i18not';
-import {
-  IoDocument,
-  IoDocumentText,
-  IoFilm,
-  IoMusicalNotes,
-  IoImage,
-  IoArchive,
-} from 'react-icons/io5';
-
-import styles from './TransferIcon.module.scss';
-import { fileType } from '../../../utils/file.js';
+import { IoArchive, IoDocument, IoDocumentText, IoFilm, IoImage, IoMusicalNotes } from 'react-icons/io5';
+import type { Transfer } from '../../../stores/Transfer.js';
 import { FileType } from '../../../types/FileType.js';
-import { Transfer } from '../../../stores/Transfer.js';
+import { fileType } from '../../../utils/file.js';
+import styles from './TransferIcon.module.scss';
 
 interface TransferIconProps {
   transfer: Transfer;
@@ -44,10 +36,7 @@ export const TransferIcon: React.FC<TransferIconProps> = ({ transfer }) => {
   return (
     <div className={styles.icon}>
       {transfer.preview ? (
-        <img
-          src={transfer.preview}
-          alt={t('transfers.icon.preview', { fileName: transfer.fileName })}
-        />
+        <img src={transfer.preview} alt={t('transfers.icon.preview', { fileName: transfer.fileName })} />
       ) : (
         typeIcon(transfer.fileType)
       )}

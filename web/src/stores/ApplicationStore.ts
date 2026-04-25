@@ -1,9 +1,8 @@
+import { type Message, MessageType } from '@filedrop/types';
 import { makeAutoObservable, runInAction } from 'mobx';
-import { Message, MessageType } from '@filedrop/types';
-
-import type { Connection } from './Connection.js';
 import { defaultAppName } from '../config.js';
 import { isClipboardReadSupported, isSafari } from '../utils/browser.js';
+import type { Connection } from './Connection.js';
 
 export class ApplicationStore {
   error?: string = undefined;
@@ -19,7 +18,7 @@ export class ApplicationStore {
   constructor(connection: Connection) {
     makeAutoObservable(this);
 
-    connection.on('message', message => this.onMessage(message as any));
+    connection.on('message', (message) => this.onMessage(message));
     this.refreshClipboardStatus();
   }
 
@@ -41,7 +40,7 @@ export class ApplicationStore {
     }
 
     navigator.share({
-      title: this.appName + ' - transfer files',
+      title: `${this.appName} - transfer files`,
       url,
     });
   }
@@ -65,7 +64,7 @@ export class ApplicationStore {
       const permissionStatus = await navigator.permissions.query({
         name: 'clipboard-read',
         allowWithoutGesture: false,
-      } as any);
+      } as unknown as PermissionDescriptor);
       this.handlePermissionState(permissionStatus.state);
       permissionStatus.onchange = () => {
         this.handlePermissionState(permissionStatus.state);

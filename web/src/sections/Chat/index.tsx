@@ -1,16 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18not';
-import Textarea from 'react-expanding-textarea';
-import { observer } from 'mobx-react-lite';
-import { IoSend, IoChatbox, IoGlobe, IoClipboard } from 'react-icons/io5';
 import clsx from 'clsx';
-
-import styles from './index.module.scss';
-import { ChatItem } from './ChatItem.js';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect, useRef, useState } from 'react';
+import Textarea from 'react-expanding-textarea';
+import { useTranslation } from 'react-i18not';
+import { IoChatbox, IoClipboard, IoGlobe, IoSend } from 'react-icons/io5';
 import { IconButton } from '../../components/IconButton.js';
-import { applicationStore, chatStore } from '../../stores/index.js';
-import { TargetTile } from '../../components/TargetTile.js';
 import { NotificationCount } from '../../components/NotificationCount.js';
+import { TargetTile } from '../../components/TargetTile.js';
+import { applicationStore, chatStore } from '../../stores/index.js';
+import { ChatItem } from './ChatItem.js';
+import styles from './index.module.scss';
 
 export const ChatSection: React.FC = observer(() => {
   const { t } = useTranslation();
@@ -19,6 +18,7 @@ export const ChatSection: React.FC = observer(() => {
   const containerRef = useRef<HTMLUListElement | null>(null);
 
   const tab = applicationStore.tab;
+  // biome-ignore lint: Needs to update visibility.
   useEffect(() => {
     chatStore.setVisible(applicationStore.tab === 'chat');
   }, [tab]);
@@ -41,6 +41,7 @@ export const ChatSection: React.FC = observer(() => {
     }
   };
 
+  // biome-ignore lint: Needs to run when new messages are added.
   useEffect(() => {
     const lastElement = containerRef.current?.lastElementChild;
     if (lastElement) {
@@ -56,7 +57,7 @@ export const ChatSection: React.FC = observer(() => {
     <div className={clsx('subsection', 'mobileFlex', styles.chat)}>
       <div className={styles.channels}>
         <div className={styles.list}>
-          {channels.map(channel =>
+          {channels.map((channel) =>
             channel.client ? (
               <TargetTile
                 className={clsx(styles.channel, {
@@ -80,7 +81,7 @@ export const ChatSection: React.FC = observer(() => {
                 <NotificationCount count={channel.unread} />
                 <IoGlobe />
               </div>
-            )
+            ),
           )}
         </div>
       </div>
@@ -101,7 +102,7 @@ export const ChatSection: React.FC = observer(() => {
           <div className={styles.items}>
             <div className={styles.placeholder} />
             <ul ref={containerRef}>
-              {chat.map(item => (
+              {chat.map((item) => (
                 <ChatItem key={item.id} item={item} />
               ))}
             </ul>
@@ -112,9 +113,7 @@ export const ChatSection: React.FC = observer(() => {
         <Textarea
           value={message}
           onKeyDown={onKeyDown}
-          onChange={(e: React.ChangeEvent) =>
-            setMessage((e.target as any).value)
-          }
+          onChange={(e) => setMessage(e.target.value)}
           placeholder={t('chat.message', {
             target: chatStore.currentChannelName,
           })}

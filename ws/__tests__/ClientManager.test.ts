@@ -1,13 +1,14 @@
 import {
   ActionMessageActionType,
-  TargetedMessageModel,
-  ActionMessageModel,
+  type ActionMessageModel,
+  type InitializeMessageModel,
+  type MessageModel,
   MessageType,
-  InitializeMessageModel,
+  type TargetedMessageModel,
 } from '@filedrop/types';
 
 import { ClientManager } from '../src/ClientManager.js';
-import { Client } from '../src/types/Client.js';
+import type { Client } from '../src/types/Client.js';
 import { generateClientName } from '../src/utils/name.js';
 export class TestClient implements Client {
   clientName = generateClientName();
@@ -21,7 +22,7 @@ export class TestClient implements Client {
   clientId?: string;
   secret?: string;
   initialized = false;
-  send(message: any) {
+  send(message: MessageModel) {
     this.lastMessage = JSON.stringify(message);
   }
 
@@ -92,14 +93,14 @@ describe('ClientManager', () => {
         expect.objectContaining({
           clientId: client3.clientId,
         }),
-      ])
+      ]),
     );
     expect(clientManager.getLocalClients(client2)).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           clientId: client2.clientId,
         }),
-      ])
+      ]),
     );
 
     clientManager.removeClient(client3);
@@ -108,7 +109,7 @@ describe('ClientManager', () => {
         expect.objectContaining({
           clientId: client1.clientId,
         }),
-      ])
+      ]),
     );
   });
 

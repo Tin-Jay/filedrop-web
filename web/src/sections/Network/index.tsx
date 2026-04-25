@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
 import clsx from 'clsx';
 import { observer } from 'mobx-react-lite';
+import type React from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18not';
 import { IoClipboard, IoCloseCircle } from 'react-icons/io5';
-
-import styles from './index.module.scss';
-import { Network } from '../../components/Network.js';
-import { applicationStore, networkStore } from '../../stores/index.js';
-import { LocalNetworks } from '../LocalNetworks/index.js';
 import { Button } from '../../components/Button.js';
+import { Network } from '../../components/Network.js';
 import { Toggle } from '../../components/Toggle.js';
+import { applicationStore, networkStore } from '../../stores/index.js';
 import { mimeToExtension } from '../../utils/file.js';
+import { LocalNetworks } from '../LocalNetworks/index.js';
+import styles from './index.module.scss';
 
 export const NetworkSection: React.FC = observer(() => {
   const clients = networkStore.clients;
@@ -32,28 +32,22 @@ export const NetworkSection: React.FC = observer(() => {
           <>
             {showPaste && (
               <div className={styles.clipboardToggle}>
-                <Toggle
-                  label={t('sendFromClipboard')}
-                  value={isPaste}
-                  onChange={setPaste}
-                />
+                <Toggle label={t('sendFromClipboard')} value={isPaste} onChange={setPaste} />
               </div>
             )}
             <Network
               icon={sendFromClipboard ? <IoClipboard /> : undefined}
               onSelect={
                 sendFromClipboard
-                  ? async clientId => {
+                  ? async (clientId) => {
                       try {
                         const items = await navigator.clipboard.read();
                         if (items?.length) {
                           for (const item of items) {
                             const blob = await item.getType(item.types[0]);
-                            const file = new File(
-                              [blob],
-                              `clipboard${mimeToExtension(blob.type)}`,
-                              { type: blob.type }
-                            );
+                            const file = new File([blob], `clipboard${mimeToExtension(blob.type)}`, {
+                              type: blob.type,
+                            });
 
                             networkStore.createTransfer(file, clientId);
                           }
@@ -69,19 +63,13 @@ export const NetworkSection: React.FC = observer(() => {
             <div className={styles.empty}>
               <div>
                 <div>{t('emptyNetwork.title')}</div>
-                {!!networkStore.otherNetworks?.length && (
-                  <div>{t('emptyNetwork.local')}</div>
-                )}
+                {!!networkStore.otherNetworks?.length && <div>{t('emptyNetwork.local')}</div>}
               </div>
               <div className="desktopHidden">
-                <Button onClick={() => applicationStore.setTab('connect')}>
-                  {t('emptyNetwork.qr')}
-                </Button>
+                <Button onClick={() => applicationStore.setTab('connect')}>{t('emptyNetwork.qr')}</Button>
               </div>
               <div className="mobileHidden">
-                <Button onClick={() => applicationStore.openModal('connect')}>
-                  {t('emptyNetwork.qr')}
-                </Button>
+                <Button onClick={() => applicationStore.openModal('connect')}>{t('emptyNetwork.qr')}</Button>
               </div>
             </div>
             <LocalNetworks />
@@ -89,9 +77,7 @@ export const NetworkSection: React.FC = observer(() => {
         )}
       </div>
       {clients.length > 0 && transfers.size === 0 && !showPaste && (
-        <div className={clsx('mobileHidden', styles.hint)}>
-          {t('desktopHint')}
-        </div>
+        <div className={clsx('mobileHidden', styles.hint)}>{t('desktopHint')}</div>
       )}
     </>
   );

@@ -17,8 +17,7 @@
     "start": "tsx src/index.ts",
     "start:prod": "node build/index.js",
     "build": "tsc",
-    "test": "vitest",
-    "lint": "eslint . --ext ts,tsx"
+    "test": "vitest"
   },
   "devDependencies": {
     "@fastify/http-proxy": "^11.4.4",

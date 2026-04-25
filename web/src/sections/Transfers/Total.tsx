@@ -1,11 +1,10 @@
-import React from 'react';
+import { observer } from 'mobx-react-lite';
+import type React from 'react';
 import { useTranslation } from 'react-i18not';
 import { IoArrowDown, IoArrowUp } from 'react-icons/io5';
-import { observer } from 'mobx-react-lite';
-
-import styles from './Total.module.scss';
+import type { Transfer } from '../../stores/Transfer.js';
 import { formatFileSize } from '../../utils/file.js';
-import { Transfer } from '../../stores/Transfer.js';
+import styles from './Total.module.scss';
 
 interface Props {
   transfers: Transfer[];
@@ -18,23 +17,11 @@ export const Total: React.FC<Props> = observer(({ transfers }) => {
     return null;
   }
 
-  const offsetSum = transfers.reduce(
-    (sum, transfer) => sum + (transfer.offset || 0),
-    0
-  );
-  const sizeSum = transfers.reduce(
-    (sum, transfer) => sum + transfer.fileSize,
-    0
-  );
+  const offsetSum = transfers.reduce((sum, transfer) => sum + (transfer.offset || 0), 0);
+  const sizeSum = transfers.reduce((sum, transfer) => sum + transfer.fileSize, 0);
 
-  const downloadSpeedSum = transfers.reduce(
-    (sum, transfer) => sum + transfer.downloadSpeed(),
-    0
-  );
-  const uploadSpeedSum = transfers.reduce(
-    (sum, transfer) => sum + transfer.uploadSpeed(),
-    0
-  );
+  const downloadSpeedSum = transfers.reduce((sum, transfer) => sum + transfer.downloadSpeed(), 0);
+  const uploadSpeedSum = transfers.reduce((sum, transfer) => sum + transfer.uploadSpeed(), 0);
 
   const formattedOffset = offsetSum && formatFileSize(offsetSum);
   const formattedSize = formatFileSize(sizeSum);

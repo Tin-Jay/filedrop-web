@@ -1,4 +1,4 @@
-import { DeviceType, MessageModel } from '@filedrop/types';
+import type { DeviceType, MessageModel } from '@filedrop/types';
 
 export interface Client {
   clientId?: string;

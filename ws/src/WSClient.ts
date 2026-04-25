@@ -1,10 +1,9 @@
-import WebSocket from 'ws';
-import { FastifyRequest } from 'fastify';
-import { DeviceType, MessageModel } from '@filedrop/types';
-
-import { Client } from './types/Client.js';
-import { generateClientName } from './utils/name.js';
+import type { DeviceType, MessageModel } from '@filedrop/types';
+import type { FastifyRequest } from 'fastify';
+import type WebSocket from 'ws';
 import { acceptForwardedFor } from './config.js';
+import type { Client } from './types/Client.js';
+import { generateClientName } from './utils/name.js';
 
 export class WSClient implements Client {
   readonly firstSeen = new Date();
@@ -18,11 +17,12 @@ export class WSClient implements Client {
   secret?: string;
   clientId?: string;
 
-  constructor(private ws: WebSocket, req: FastifyRequest) {
+  constructor(
+    private ws: WebSocket,
+    req: FastifyRequest,
+  ) {
     const address =
-      acceptForwardedFor && req.headers['x-forwarded-for']
-        ? req.headers['x-forwarded-for']
-        : req.socket.remoteAddress;
+      acceptForwardedFor && req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'] : req.socket.remoteAddress;
     this.remoteAddress = typeof address === 'string' ? address : address?.[0];
   }
 

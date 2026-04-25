@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
-import { useLocation } from 'wouter';
-import { useTranslation } from 'react-i18not';
 import { observer } from 'mobx-react-lite';
+import type React from 'react';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18not';
+import { useLocation } from 'wouter';
 
 import { Loading } from '../components/Loading.js';
 import { nameCharacterSet, nameLength } from '../config.js';
-import { randomString } from '../utils/string.js';
 import { applicationStore, connection, networkStore } from '../stores/index.js';
+import { randomString } from '../utils/string.js';
 
 export const Redirect: React.FC = observer(() => {
   const { t } = useTranslation();
@@ -16,14 +17,13 @@ export const Redirect: React.FC = observer(() => {
 
   const navigate = useLocation()[1];
 
+  // biome-ignore lint: Needs to run if any of these changes.
   useEffect(() => {
-    const currentNetworkName =
-      networkName ||
-      suggestedNetworkName ||
-      randomString(nameLength, nameCharacterSet);
+    const currentNetworkName = networkName || suggestedNetworkName || randomString(nameLength, nameCharacterSet);
 
     if (connected && clientId) {
-      navigate('/' + currentNetworkName + window.location.hash, {
+      // Preserve the hash for automatic send from clipboard. (#paste)
+      navigate(`/${currentNetworkName}${window.location.hash}`, {
         replace: true,
       });
     }

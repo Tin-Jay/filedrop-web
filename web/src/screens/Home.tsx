@@ -1,27 +1,26 @@
-import React, { Suspense, useEffect, useState } from 'react';
-import { useParams } from 'wouter';
-import { observer } from 'mobx-react-lite';
-import { useTranslation } from 'react-i18not';
 import clsx from 'clsx';
-
-import styles from './Home.module.scss';
-import { applicationStore, connection, networkStore } from '../stores/index.js';
+import { observer } from 'mobx-react-lite';
+import React, { Suspense, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18not';
+import { useParams } from 'wouter';
 import { Footer } from '../components/Footer.js';
 import { Modal } from '../components/Modal.js';
 import { ClipboardModal } from '../modals/ClipboardModal.js';
-import { IncompatibleBrowserSection } from '../sections/IncompatibleBrowser/index.js';
-import { YourTileSection } from '../sections/YourTile/index.js';
-import { NoticeSection } from '../sections/Notice/index.js';
-import { NetworkSection } from '../sections/Network/index.js';
-import { TransfersSection } from '../sections/Transfers/index.js';
 import { ChatSection } from '../sections/Chat/index.js';
+import { IncompatibleBrowserSection } from '../sections/IncompatibleBrowser/index.js';
 import { MobileTabs } from '../sections/MobileTabs/index.js';
+import { NetworkSection } from '../sections/Network/index.js';
+import { NoticeSection } from '../sections/Notice/index.js';
 import { SettingsSection } from '../sections/Settings/index.js';
+import { TransfersSection } from '../sections/Transfers/index.js';
+import { YourTileSection } from '../sections/YourTile/index.js';
+import { applicationStore, connection, networkStore } from '../stores/index.js';
+import styles from './Home.module.scss';
 
 const ConnectSection = React.lazy(() => import('../sections/Connect/index.js'));
 
 function itemToString(item: DataTransferItem): Promise<string> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     item.getAsString(resolve);
   });
 }
@@ -45,15 +44,12 @@ export const Home: React.FC = observer(() => {
       }
 
       const element = e.target as HTMLElement;
-      if (
-        document.body.contains(element) &&
-        (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT')
-      ) {
+      if (document.body.contains(element) && (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT')) {
         return;
       }
 
       const files = [];
-      for (let item of e.clipboardData!.items) {
+      for (const item of e.clipboardData!.items) {
         const file = item.getAsFile();
 
         if (file) {
@@ -79,7 +75,7 @@ export const Home: React.FC = observer(() => {
     return () => {
       document.removeEventListener('paste', onPaste);
     };
-  }, [setClipboardFiles]);
+  }, []);
 
   if (connection.disconnectReason) {
     return (
@@ -87,8 +83,7 @@ export const Home: React.FC = observer(() => {
         <div className="subsection">
           <h2>{t('disconnected.title')}</h2>
           <div>
-            <span>{t('disconnected.reason')}</span>{' '}
-            {t(`disconnected.reasons.${connection.disconnectReason}`)}
+            <span>{t('disconnected.reason')}</span> {t(`disconnected.reasons.${connection.disconnectReason}`)}
           </div>
         </div>
         <Footer />
@@ -104,22 +99,11 @@ export const Home: React.FC = observer(() => {
 
   return (
     <>
-      <ClipboardModal
-        files={clipboardFiles}
-        dismissClipboard={dismissClipboard}
-      />
-      <Modal
-        onClose={() => applicationStore.closeModal()}
-        title={t('tabs.settings')}
-        isOpen={modal === 'settings'}
-      >
+      <ClipboardModal files={clipboardFiles} dismissClipboard={dismissClipboard} />
+      <Modal onClose={() => applicationStore.closeModal()} title={t('tabs.settings')} isOpen={modal === 'settings'}>
         <SettingsSection />
       </Modal>
-      <Modal
-        onClose={() => applicationStore.closeModal()}
-        title={t('tabs.connect')}
-        isOpen={modal === 'connect'}
-      >
+      <Modal onClose={() => applicationStore.closeModal()} title={t('tabs.connect')} isOpen={modal === 'connect'}>
         <ConnectSection />
       </Modal>
       <div className={clsx('mobileFlex', styles.home)}>

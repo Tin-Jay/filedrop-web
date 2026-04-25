@@ -1,11 +1,10 @@
-import React from 'react';
-import { IoQrCode, IoChatbubbles, IoHome, IoSettings } from 'react-icons/io5';
 import { observer } from 'mobx-react-lite';
-
+import type React from 'react';
+import { IoChatbubbles, IoHome, IoQrCode, IoSettings } from 'react-icons/io5';
+import { NotificationCount } from '../../components/NotificationCount.js';
+import { chatStore, networkStore } from '../../stores/index.js';
 import styles from './index.module.scss';
 import { Tab } from './Tab.js';
-import { chatStore, networkStore } from '../../stores/index.js';
-import { NotificationCount } from '../../components/NotificationCount.js';
 
 export const MobileTabs: React.FC = observer(() => {
   return (

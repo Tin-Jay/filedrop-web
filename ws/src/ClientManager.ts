@@ -1,41 +1,32 @@
 import {
-  LocalNetworksMessageModel,
-  MessageModel,
-  NetworkMessageModel,
-  TargetedMessageModel,
+  type AppInfoMessageModel,
+  type ClientInfoMessageModel,
+  type ClientModel,
+  type DisconnectedMessageModel,
+  type ErrorMessageModel,
+  type LocalNetworksMessageModel,
+  type MessageModel,
   MessageType,
-  ClientModel,
-  AppInfoMessageModel,
-  ClientInfoMessageModel,
-  PingMessageModel,
-  NetworkModel,
-  DisconnectedMessageModel,
-  ErrorMessageModel,
+  type NetworkMessageModel,
+  type NetworkModel,
+  type PingMessageModel,
+  type TargetedMessageModel,
 } from '@filedrop/types';
-
-import { Client } from './types/Client.js';
+import { abuseEmail, appName, maxNetworkClients, maxSize, noticeText, noticeUrl, requireCrypto } from './config.js';
+import type { Client } from './types/Client.js';
+import { secretToId } from './utils/id.js';
 import { rtcConfiguration } from './utils/rtcConfiguration.js';
 import {
-  isNetworkNameMessageModel,
-  isClientNameMessageModel,
-  isTransferMessageModel,
   isActionMessageModel,
-  isRTCDescriptionMessageModel,
-  isRTCCandidateMessageModel,
+  isChatMessageModel,
+  isClientNameMessageModel,
   isEncryptedMessageModel,
   isInitializeMessageModel,
-  isChatMessageModel,
+  isNetworkNameMessageModel,
+  isRTCCandidateMessageModel,
+  isRTCDescriptionMessageModel,
+  isTransferMessageModel,
 } from './utils/validation.js';
-import {
-  abuseEmail,
-  appName,
-  maxNetworkClients,
-  maxSize,
-  noticeText,
-  noticeUrl,
-  requireCrypto,
-} from './config.js';
-import { secretToId } from './utils/id.js';
 
 export class ClientManager {
   private clients = new Set<Client>();
@@ -110,9 +101,7 @@ export class ClientManager {
       client.deviceType = message.deviceType;
       this.setNetworkName(client, name);
     } else if (isClientNameMessageModel(message)) {
-      const clients = [...this.clients].filter(
-        c => c.clientId === client.clientId
-      );
+      const clients = [...this.clients].filter((c) => c.clientId === client.clientId);
 
       for (const client of clients) {
         client.clientName = message.clientName;
@@ -164,9 +153,7 @@ export class ClientManager {
       clientId: fromClientId,
     };
 
-    const targets = [...this.clients].filter(
-      c => c.clientId === message.targetId
-    );
+    const targets = [...this.clients].filter((c) => c.clientId === message.targetId);
     this.broadcast(data, targets);
   }
 
@@ -182,14 +169,12 @@ export class ClientManager {
   }
 
   getNetworkClients(networkName: string): Client[] {
-    const clients = [...this.clients].filter(
-      client => client.networkName === networkName
-    );
+    const clients = [...this.clients].filter((client) => client.networkName === networkName);
 
     const uniqueClients: Client[] = [];
 
     for (const client of clients) {
-      if (!uniqueClients.find(c => c.clientId === client.clientId)) {
+      if (!uniqueClients.find((c) => c.clientId === client.clientId)) {
         uniqueClients.push(client);
       }
     }
@@ -202,9 +187,9 @@ export class ClientManager {
   sendNetworkMessage(networkName: string) {
     const networkClients = this.getNetworkClients(networkName);
 
-    networkClients.forEach(client => {
+    networkClients.forEach((client) => {
       try {
-        const clients: ClientModel[] = networkClients.map(otherClient => {
+        const clients: ClientModel[] = networkClients.map((otherClient) => {
           return {
             clientId: otherClient.clientId!,
             clientName: otherClient.clientName,
@@ -241,7 +226,7 @@ export class ClientManager {
 
   getLocalClients(client: Client) {
     return [...this.clients]
-      .filter(c => c.remoteAddress === client.remoteAddress && c.networkName)
+      .filter((c) => c.remoteAddress === client.remoteAddress && c.networkName)
       .sort((a, b) => b.lastSeen.getTime() - a.lastSeen.getTime());
   }
 
@@ -259,7 +244,7 @@ export class ClientManager {
     for (const name of networkNames.values()) {
       networks.push({
         name,
-        clients: this.getNetworkClients(name).map(otherClient => {
+        clients: this.getNetworkClients(name).map((otherClient) => {
           return {
             clientId: otherClient.clientId!,
             clientName: otherClient.clientName,
@@ -292,7 +277,7 @@ export class ClientManager {
   pingClients() {
     const pingMessage: PingMessageModel = {
       type: MessageType.PING,
-      timestamp: new Date().getTime(),
+      timestamp: Date.now(),
     };
 
     this.broadcast(pingMessage);
@@ -317,7 +302,7 @@ export class ClientManager {
   removeInactiveClients() {
     const minuteAgo = new Date(Date.now() - 1000 * 20);
 
-    this.clients.forEach(client => {
+    this.clients.forEach((client) => {
       if (client.readyState !== 1) return;
 
       if (client.lastSeen < minuteAgo) {

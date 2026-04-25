@@ -1,19 +1,19 @@
-import Joi from 'joi';
 import {
-  MessageModel,
-  NetworkNameMessageModel,
-  ClientNameMessageModel,
-  TransferMessageModel,
-  ActionMessageModel,
-  RTCDescriptionMessageModel,
-  RTCCandidateMessageModel,
-  EncryptedMessageModel,
-  MessageType,
   ActionMessageActionType,
+  type ActionMessageModel,
+  type ChatMessageModel,
+  type ClientNameMessageModel,
   DeviceType,
-  InitializeMessageModel,
-  ChatMessageModel,
+  type EncryptedMessageModel,
+  type InitializeMessageModel,
+  type MessageModel,
+  MessageType,
+  type NetworkNameMessageModel,
+  type RTCCandidateMessageModel,
+  type RTCDescriptionMessageModel,
+  type TransferMessageModel,
 } from '@filedrop/types';
+import Joi from 'joi';
 
 const messageModelSchema = Joi.object({
   type: Joi.string().alphanum().required(),
@@ -89,60 +89,54 @@ const encryptedMessageModelSchema = Joi.object({
   targetId: Joi.string().hex().required(),
 }).required();
 
-export function isMessageModel(message: any): message is MessageModel {
+export function isMessageModel(message: unknown): message is MessageModel {
   return !messageModelSchema.validate(message).error;
 }
 
 export function isInitializeMessageModel(
-  message: MessageModel | InitializeMessageModel
+  message: MessageModel | InitializeMessageModel,
 ): message is InitializeMessageModel {
   return !initializeMessageModelSchema.validate(message).error;
 }
 
 export function isNetworkNameMessageModel(
-  message: MessageModel | NetworkNameMessageModel
+  message: MessageModel | NetworkNameMessageModel,
 ): message is NetworkNameMessageModel {
   return !networkNameMessageModelSchema.validate(message).error;
 }
 
 export function isClientNameMessageModel(
-  message: MessageModel | ClientNameMessageModel
+  message: MessageModel | ClientNameMessageModel,
 ): message is ClientNameMessageModel {
   return !clientNameMessageModelSchema.validate(message).error;
 }
 
-export function isChatMessageModel(
-  message: MessageModel | ChatMessageModel
-): message is ChatMessageModel {
+export function isChatMessageModel(message: MessageModel | ChatMessageModel): message is ChatMessageModel {
   return !chatMessageModelSchema.validate(message).error;
 }
 
-export function isTransferMessageModel(
-  message: MessageModel | TransferMessageModel
-): message is TransferMessageModel {
+export function isTransferMessageModel(message: MessageModel | TransferMessageModel): message is TransferMessageModel {
   return !transferMessageModelSchema.validate(message).error;
 }
 
-export function isActionMessageModel(
-  message: MessageModel | ActionMessageModel
-): message is ActionMessageModel {
+export function isActionMessageModel(message: MessageModel | ActionMessageModel): message is ActionMessageModel {
   return !actionMessageModelSchema.validate(message).error;
 }
 
 export function isRTCDescriptionMessageModel(
-  message: MessageModel | RTCDescriptionMessageModel
+  message: MessageModel | RTCDescriptionMessageModel,
 ): message is RTCDescriptionMessageModel {
   return !rtcDescriptionMessageModelSchema.validate(message).error;
 }
 
 export function isRTCCandidateMessageModel(
-  message: MessageModel | RTCCandidateMessageModel
+  message: MessageModel | RTCCandidateMessageModel,
 ): message is RTCCandidateMessageModel {
   return !rtcCandidateMessageModelSchema.validate(message).error;
 }
 
 export function isEncryptedMessageModel(
-  message: MessageModel | EncryptedMessageModel
+  message: MessageModel | EncryptedMessageModel,
 ): message is EncryptedMessageModel {
   return !encryptedMessageModelSchema.validate(message).error;
 }

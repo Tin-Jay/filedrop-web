@@ -1,11 +1,8 @@
 import { useRef, useState } from 'react';
 
-export function useTimedState<T>(
-  initialValue: T,
-  timeoutMs = 2000
-): [T, (value: T) => void] {
+export function useTimedState<T>(initialValue: T, timeoutMs = 2000): [T, (value: T) => void] {
   const [value, setValue] = useState(initialValue);
-  const timeoutRef = useRef<any>();
+  const timeoutRef = useRef<number>();
 
   return [
     value,

@@ -1,13 +1,5 @@
 import crypto from 'crypto';
-import {
-  stunServer,
-  turnServer,
-  turnUsername,
-  turnMode,
-  turnSecret,
-  turnExpiry,
-  turnCredential,
-} from '../config.js';
+import { stunServer, turnCredential, turnExpiry, turnMode, turnSecret, turnServer, turnUsername } from '../config.js';
 
 export const rtcConfiguration = (clientId?: string) => {
   const iceServers = [];
@@ -18,8 +10,8 @@ export const rtcConfiguration = (clientId?: string) => {
 
   if (turnServer && turnUsername && clientId) {
     if (turnMode === 'hmac' && turnSecret) {
-      const timestamp = Math.floor(new Date().getTime() / 1000) + turnExpiry;
-      const username = timestamp + ':' + clientId;
+      const timestamp = Math.floor(Date.now() / 1000) + turnExpiry;
+      const username = `${timestamp}:${clientId}`;
       const hmac = crypto.createHmac('sha1', turnSecret);
       hmac.setEncoding('base64');
       hmac.write(username);

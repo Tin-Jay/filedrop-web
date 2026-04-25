@@ -1,24 +1,23 @@
 import {
   ActionMessageActionType,
-  ClientModel,
-  ClientNameMessageModel,
-  Message,
+  type ClientModel,
+  type ClientNameMessageModel,
+  type Message,
   MessageType,
-  NetworkModel,
-  NetworkNameMessageModel,
-  TransferMessageModel,
+  type NetworkModel,
+  type NetworkNameMessageModel,
+  type TransferMessageModel,
 } from '@filedrop/types';
-import { makeAutoObservable, runInAction } from 'mobx';
 import { canvas } from 'imtool';
-
-import type { Connection } from './Connection.js';
-import { deviceType } from '../utils/browser.js';
-import { TransferState } from '../types/TransferState.js';
-import { Transfer, TransferSettings } from './Transfer.js';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { defaultAppName } from '../config.js';
-import { replaceUrlParameters } from '../utils/url.js';
+import { TransferState } from '../types/TransferState.js';
+import { deviceType } from '../utils/browser.js';
 import { getItem, setItem } from '../utils/storage.js';
+import { replaceUrlParameters } from '../utils/url.js';
+import type { Connection } from './Connection.js';
 import { settingsStore } from './SettingsStore.js';
+import { Transfer, type TransferSettings } from './Transfer.js';
 
 export class NetworkStore {
   maxSize = 0;
@@ -36,7 +35,7 @@ export class NetworkStore {
   constructor(private connection: Connection) {
     makeAutoObservable(this);
 
-    connection.on('message', message => this.onMessage(message as any));
+    connection.on('message', (message) => this.onMessage(message));
   }
 
   get transferList() {
@@ -46,29 +45,23 @@ export class NetworkStore {
   }
 
   get incomingTransfers() {
-    return this.transferList.filter(
-      transfer => transfer.state === TransferState.INCOMING
-    );
+    return this.transferList.filter((transfer) => transfer.state === TransferState.INCOMING);
   }
 
   get outgoingTransfers() {
-    return this.transferList.filter(
-      transfer => transfer.state === TransferState.OUTGOING
-    );
+    return this.transferList.filter((transfer) => transfer.state === TransferState.OUTGOING);
   }
 
   get activeTransfers() {
-    return this.transferList.filter(transfer => transfer.isActive);
+    return this.transferList.filter((transfer) => transfer.isActive);
   }
 
   get doneTransfers() {
-    return this.transferList.filter(transfer => transfer.isDone);
+    return this.transferList.filter((transfer) => transfer.isDone);
   }
 
   get otherNetworks() {
-    return this.localNetworks.filter(
-      network => network.name.toUpperCase() !== this.networkName?.toUpperCase()
-    );
+    return this.localNetworks.filter((network) => network.name.toUpperCase() !== this.networkName?.toUpperCase());
   }
 
   get currentClient() {
@@ -80,16 +73,14 @@ export class NetworkStore {
   }
 
   get clients() {
-    return [...this.networkClients.values()].filter(
-      client => client.clientId !== this.connection.clientId
-    );
+    return [...this.networkClients.values()].filter((client) => client.clientId !== this.connection.clientId);
   }
 
   updateTitle() {
     const incomingTransferCount = this.incomingTransfers.length;
 
     if (incomingTransferCount > 0) {
-      document.title = '(' + incomingTransferCount + ') ' + this.appName;
+      document.title = `(${incomingTransferCount}) ${this.appName}`;
     } else {
       document.title = this.appName;
     }
@@ -118,15 +109,13 @@ export class NetworkStore {
   }
 
   async createTransfer(file: File, targetId: string) {
-    let preview: string | undefined = undefined;
+    let preview: string | undefined;
 
     if (file.type.startsWith('image/')) {
       const maxSize = this.maxSize;
       try {
         const newCanvas = await canvas.fromFile(file);
-        const url = canvas
-          .thumbnail(newCanvas, 100, true)
-          .toDataURL('image/jpeg', 0.65);
+        const url = canvas.thumbnail(newCanvas, 100, true).toDataURL('image/jpeg', 0.65);
 
         // Ensure the URL isn't too long.
         if (url.length < maxSize * 0.75) {
@@ -188,18 +177,15 @@ export class NetworkStore {
 
         this.maxSize = message.maxSize;
         break;
-      case MessageType.CLIENT_INFO:
+      case MessageType.CLIENT_INFO: {
         const rtcConfiguration = message.rtcConfiguration as RTCConfiguration;
 
         // If the server is allowed to set other properties it may result in a potential privacy breach.
         // Let's make sure that doesn't happen.
         // TODO: add other properties if neccessary.
-        if (
-          rtcConfiguration.iceServers &&
-          Array.isArray(rtcConfiguration.iceServers)
-        ) {
+        if (rtcConfiguration.iceServers && Array.isArray(rtcConfiguration.iceServers)) {
           this.rtcConfiguration = {
-            iceServers: rtcConfiguration.iceServers.map(server => ({
+            iceServers: rtcConfiguration.iceServers.map((server) => ({
               ...server,
               urls: Array.isArray(server.urls)
                 ? server.urls.map(replaceUrlParameters)
@@ -219,6 +205,7 @@ export class NetworkStore {
           this.updateNetworkName(this.networkName);
         }
         break;
+      }
       case MessageType.ERROR:
         if (message.mode === 'network') {
           this.networkError = message.reason;
@@ -240,9 +227,7 @@ export class NetworkStore {
           const transfer = new Transfer(this, this.connection, {
             ...message,
             targetId: message.clientId!,
-            preview: message.preview?.startsWith('data:')
-              ? message.preview
-              : undefined,
+            preview: message.preview?.startsWith('data:') ? message.preview : undefined,
             receiving: true,
           });
 

@@ -1,4 +1,5 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import type React from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 interface Props {
@@ -6,11 +7,7 @@ interface Props {
   className?: string;
 }
 
-export const Portal: React.FC<React.PropsWithChildren<Props>> = ({
-  children,
-  isOpen,
-  className,
-}) => {
+export const Portal: React.FC<React.PropsWithChildren<Props>> = ({ children, isOpen, className }) => {
   const elementRef = useRef<HTMLDivElement>(document.createElement('div'));
 
   useLayoutEffect(() => {

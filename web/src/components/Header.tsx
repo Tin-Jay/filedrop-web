@@ -1,16 +1,11 @@
-import React from 'react';
-import { useTranslation } from 'react-i18not';
-import {
-  IoLogoGithub,
-  IoInformationCircle,
-  IoLogoTwitter,
-} from 'react-icons/io5';
 import { observer } from 'mobx-react-lite';
-
+import type React from 'react';
+import { useTranslation } from 'react-i18not';
+import { IoInformationCircle, IoLogoGithub, IoLogoTwitter } from 'react-icons/io5';
+import { applicationStore } from '../stores/index.js';
+import { DropIcon } from './DropIcon.js';
 import styles from './Header.module.scss';
 import { Link } from './Link.js';
-import { DropIcon } from './DropIcon.js';
-import { applicationStore } from '../stores/index.js';
 import { SecureStatus } from './SecureStatus.js';
 
 export const Header: React.FC = observer(() => {

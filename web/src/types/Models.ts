@@ -1,9 +1,4 @@
-import { TransferState } from './TransferState.js';
-
-export interface ActionModel {
-  type: string;
-  value: any;
-}
+import type { TransferState } from './TransferState.js';
 
 export interface TransferModel {
   transferId: string;

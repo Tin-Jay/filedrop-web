@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import { execSync } from 'child_process';
+import { defineConfig } from 'vite';
 
 const gitRevision = execSync('git rev-parse --short HEAD').toString().trim();
 
@@ -13,8 +13,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   resolve: {
-    mainFields:
-      mode === 'production' ? ['jsnext:main', 'module', 'main'] : undefined,
+    mainFields: mode === 'production' ? ['jsnext:main', 'module', 'main'] : undefined,
   },
   build: {
     outDir: './build',

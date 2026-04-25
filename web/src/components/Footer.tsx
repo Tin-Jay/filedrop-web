@@ -1,11 +1,10 @@
-import React from 'react';
-import { useTranslation } from 'react-i18not';
-import { observer } from 'mobx-react-lite';
 import clsx from 'clsx';
-
+import { observer } from 'mobx-react-lite';
+import type React from 'react';
+import { useTranslation } from 'react-i18not';
+import { applicationStore } from '../stores/index.js';
 import styles from './Footer.module.scss';
 import { Link } from './Link.js';
-import { applicationStore } from '../stores/index.js';
 
 export const Footer: React.FC = observer(() => {
   const { t } = useTranslation();
@@ -28,11 +27,7 @@ export const Footer: React.FC = observer(() => {
           <Link to="/tech">{t('sections.tech')}</Link>
         </li>
         <li>
-          <a
-            href="https://github.com/mat-sz/filedrop"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://github.com/mat-sz/filedrop" target="_blank" rel="noopener noreferrer">
             {t('sections.github')}
           </a>
         </li>

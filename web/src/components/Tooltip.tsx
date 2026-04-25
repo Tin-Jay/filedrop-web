@@ -1,5 +1,5 @@
-import React from 'react';
 import clsx from 'clsx';
+import type React from 'react';
 
 import styles from './Tooltip.module.scss';
 
@@ -21,9 +21,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   return (
     <div className={clsx(styles.wrapper, wrapperClassName)}>
       {children}
-      <div className={clsx(styles.tooltip, tooltipClassName, styles[location])}>
-        {content}
-      </div>
+      <div className={clsx(styles.tooltip, tooltipClassName, styles[location])}>{content}</div>
     </div>
   );
 };

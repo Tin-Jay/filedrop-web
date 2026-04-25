@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18not';
-import { IoPencil, IoCheckmark, IoClose } from 'react-icons/io5';
 import { observer } from 'mobx-react-lite';
-
-import styles from './ClientName.module.scss';
+import type React from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18not';
+import { IoCheckmark, IoClose, IoPencil } from 'react-icons/io5';
 import { IconButton } from '../../components/IconButton.js';
 import { networkStore } from '../../stores/index.js';
+import styles from './ClientName.module.scss';
 
 export const ClientName: React.FC = observer(() => {
   const { t } = useTranslation();
@@ -50,7 +50,7 @@ export const ClientName: React.FC = observer(() => {
             type="text"
             placeholder={t('yourName')}
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             maxLength={32}
           />
           <IconButton round onClick={onSave} title={t('save')}>

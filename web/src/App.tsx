@@ -1,18 +1,16 @@
 import React, { Suspense } from 'react';
-import { Router, Route, Switch } from 'wouter';
 import { useTranslation } from 'react-i18not';
+import { Route, Router, Switch } from 'wouter';
 
 import './App.scss';
 
-import { Home } from './screens/Home.js';
-import { Redirect } from './screens/Redirect.js';
 import { Header } from './components/Header.js';
 import { Status } from './components/Status.js';
+import { Home } from './screens/Home.js';
+import { Redirect } from './screens/Redirect.js';
 
 const Abuse = React.lazy(() => import('./screens/Abuse.js'));
-const TechnicalInformation = React.lazy(
-  () => import('./screens/TechnicalInformation.js')
-);
+const TechnicalInformation = React.lazy(() => import('./screens/TechnicalInformation.js'));
 const ToS = React.lazy(() => import('./screens/ToS.js'));
 const Privacy = React.lazy(() => import('./screens/Privacy.js'));
 const About = React.lazy(() => import('./screens/About.js'));

@@ -1,5 +1,5 @@
-import React from 'react';
 import { observer } from 'mobx-react-lite';
+import type React from 'react';
 
 import { Link } from '../components/Link.js';
 import { TextSection } from '../components/TextSection.js';
@@ -20,8 +20,7 @@ export const Abuse: React.FC = observer(() => {
       </p>
       <ul>
         <li>
-          you've witnessed usage that goes against the{' '}
-          <Link to="/tos">Terms of Service</Link>,
+          you've witnessed usage that goes against the <Link to="/tos">Terms of Service</Link>,
         </li>
         <li>you'd like to submit a DMCA notice.</li>
       </ul>

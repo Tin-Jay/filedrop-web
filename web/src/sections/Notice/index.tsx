@@ -1,9 +1,8 @@
-import React from 'react';
 import clsx from 'clsx';
 import { observer } from 'mobx-react-lite';
-
-import styles from './index.module.scss';
+import type React from 'react';
 import { applicationStore } from '../../stores/index.js';
+import styles from './index.module.scss';
 
 export const NoticeSection: React.FC = observer(() => {
   const { noticeText, noticeUrl } = applicationStore;

@@ -9,12 +9,7 @@ export function fileType(type?: string): FileType {
 
   if (type.startsWith('text/') || type.includes('pdf')) {
     return FileType.TEXT;
-  } else if (
-    type.includes('zip') ||
-    type.includes('rar') ||
-    type.includes('7z') ||
-    type.includes('compress')
-  ) {
+  } else if (type.includes('zip') || type.includes('rar') || type.includes('7z') || type.includes('compress')) {
     return FileType.ARCHIVE;
   } else if (type.startsWith('image/')) {
     return FileType.IMAGE;
@@ -29,11 +24,7 @@ export function fileType(type?: string): FileType {
   return FileType.UNKNOWN;
 }
 
-export function formatFileName(
-  name: string,
-  fileNameLength = 32,
-  replacementCharacter = '…'
-): string {
+export function formatFileName(name: string, fileNameLength = 32, replacementCharacter = '…'): string {
   const dotIndex = name.lastIndexOf('.');
   const half = Math.floor(fileNameLength / 2);
 
@@ -43,18 +34,11 @@ export function formatFileName(
 
     if (fileName.length > fileNameLength) {
       return (
-        fileName.substring(0, half) +
-        replacementCharacter +
-        fileName.substring(fileName.length - half) +
-        extension
+        fileName.substring(0, half) + replacementCharacter + fileName.substring(fileName.length - half) + extension
       );
     }
   } else if (name.length > 24) {
-    return (
-      name.substring(0, half) +
-      replacementCharacter +
-      name.substring(name.length - half)
-    );
+    return name.substring(0, half) + replacementCharacter + name.substring(name.length - half);
   }
 
   return name;

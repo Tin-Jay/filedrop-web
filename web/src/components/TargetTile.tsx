@@ -1,12 +1,11 @@
-import React from 'react';
+import { type ClientModel, DeviceType } from '@filedrop/types';
 import clsx from 'clsx';
-import { IoLockClosed, IoPhonePortrait, IoHome } from 'react-icons/io5';
-import { ClientModel, DeviceType } from '@filedrop/types';
 import { observer } from 'mobx-react-lite';
-
-import styles from './TargetTile.module.scss';
-import { uuidToColor } from '../utils/color.js';
+import React from 'react';
+import { IoHome, IoLockClosed, IoPhonePortrait } from 'react-icons/io5';
 import { connection, settingsStore } from '../stores/index.js';
+import { uuidToColor } from '../utils/color.js';
+import styles from './TargetTile.module.scss';
 
 interface TargetTileProps extends React.HTMLProps<HTMLDivElement> {
   client: ClientModel;
@@ -27,13 +26,10 @@ export const TargetTile = observer(
             styles.tile,
             styles[variant],
             { [styles.everyone]: client.clientId === 'everyone' },
-            className
+            className,
           )}
           style={{
-            backgroundColor:
-              client.clientId !== 'everyone'
-                ? uuidToColor(client.clientId)
-                : undefined,
+            backgroundColor: client.clientId !== 'everyone' ? uuidToColor(client.clientId) : undefined,
           }}
           ref={ref}
           {...props}
@@ -48,6 +44,6 @@ export const TargetTile = observer(
           {children}
         </div>
       );
-    }
-  )
+    },
+  ),
 );

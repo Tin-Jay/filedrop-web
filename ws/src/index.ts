@@ -1,20 +1,12 @@
-import path, { resolve } from 'path';
-import Fastify from 'fastify';
-import fastifyWebsocket from '@fastify/websocket';
-import fastifyStatic from '@fastify/static';
 import fastifyCompress from '@fastify/compress';
-
-import { WSClient } from './WSClient.js';
+import fastifyStatic from '@fastify/static';
+import fastifyWebsocket from '@fastify/websocket';
+import Fastify from 'fastify';
+import path, { resolve } from 'path';
 import { ClientManager } from './ClientManager.js';
+import { appName, host, maxSize, port, staticRoot, useProxy } from './config.js';
 import { isMessageModel } from './utils/validation.js';
-import {
-  host,
-  maxSize,
-  port,
-  useProxy,
-  appName,
-  staticRoot,
-} from './config.js';
+import { WSClient } from './WSClient.js';
 
 const clientManager = new ClientManager();
 const app = Fastify();
@@ -90,13 +82,13 @@ app.get('/manifest.json', (_, res) => {
 });
 
 app.register(fastifyWebsocket);
-app.register(async fastify => {
+app.register(async (fastify) => {
   fastify.get('/ws', { websocket: true }, (ws, req) => {
     const client = new WSClient(ws, req);
 
     clientManager.sendAppInfo(client);
 
-    ws.on('error', error => {
+    ws.on('error', (error) => {
       console.log('[ERROR (Handled)]', error.message);
     });
 
@@ -110,7 +102,7 @@ app.register(async fastify => {
         if (isMessageModel(message)) {
           clientManager.handleMessage(client, message);
         }
-      } catch (e) {}
+      } catch {}
     });
 
     ws.on('close', () => {

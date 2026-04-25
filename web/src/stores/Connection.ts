@@ -1,23 +1,24 @@
-import { makeAutoObservable, runInAction } from 'mobx';
-import { RSA } from 'matcrypt';
-import { TypeSocket } from 'typesocket';
 import {
-  ClientModel,
-  EncryptedMessageModel,
-  InitializeMessageModel,
-  Message,
+  type ClientModel,
+  type EncryptedMessageModel,
+  type InitializeMessageModel,
+  type Message,
   MessageType,
-  PingMessageModel,
+  type PingMessageModel,
 } from '@filedrop/types';
+import { RSA } from 'matcrypt';
+import { action, computed, makeObservable, observable, runInAction } from 'mobx';
+import { TypeSocket } from 'typesocket';
 
 import { wsServer } from '../config.js';
+import { BasicEventEmitter } from '../utils/events.js';
 import { randomString } from '../utils/string.js';
 
 declare global {
   var _filedropSocket: TypeSocket<Message> | undefined;
 }
 
-export class Connection {
+export class Connection extends BasicEventEmitter<{ message: [message: Message] }> {
   clientId?: string = undefined;
   connected = false;
   remoteAddress?: string = undefined;
@@ -28,10 +29,9 @@ export class Connection {
 
   clientCache: Map<string, ClientModel> = new Map();
   clients: ClientModel[] = [];
-  eventListeners: Map<string, Set<Function>> = new Map();
-  targetMessageQueue: Map<string, Message[]> = new Map();
-  messageQueue: Message[] = [];
 
+  private targetMessageQueue: Map<string, Message[]> = new Map();
+  private messageQueue: Message[] = [];
   private secret = randomString(64);
   private socket = new TypeSocket<Message>(wsServer, {
     maxRetries: 0,
@@ -40,7 +40,24 @@ export class Connection {
   });
 
   constructor() {
-    makeAutoObservable(this);
+    super();
+    makeObservable(this, {
+      clientId: observable,
+      connected: observable,
+      remoteAddress: observable,
+      publicKey: observable,
+      privateKey: observable,
+      disconnectReason: observable,
+      alwaysSecure: observable,
+      clientCache: observable,
+      clients: observable,
+      secure: computed,
+      init: action,
+      send: action,
+      onConnected: action,
+      onDisconnected: action,
+      onMessage: action,
+    });
 
     // Make sure we don't have any lingering connections when the app reloads.
     window._filedropSocket?.disconnect();
@@ -48,7 +65,7 @@ export class Connection {
 
     this.socket.on('connected', () => this.onConnected());
     this.socket.on('disconnected', () => this.onDisconnected());
-    this.socket.on('message', message => this.onMessage(message as any));
+    this.socket.on('message', (message) => this.onMessage(message));
 
     this.init();
   }
@@ -79,7 +96,7 @@ export class Connection {
 
     if ('targetId' in message) {
       const targetId = message.targetId as string;
-      const target = this.clients.find(client => client.clientId === targetId);
+      const target = this.clients.find((client) => client.clientId === targetId);
       if (!target) {
         if (!this.targetMessageQueue.has(targetId)) {
           this.targetMessageQueue.set(targetId, []);
@@ -93,10 +110,7 @@ export class Connection {
 
       if (targetPublicKey) {
         try {
-          const payload: string = await RSA.encryptString(
-            targetPublicKey,
-            JSON.stringify(message)
-          );
+          const payload: string = await RSA.encryptString(targetPublicKey, JSON.stringify(message));
 
           const msg: EncryptedMessageModel = {
             type: MessageType.ENCRYPTED,
@@ -115,22 +129,6 @@ export class Connection {
     }
 
     this.socket.send(message);
-  }
-
-  on(type: 'message', handler: (message: Message) => void) {
-    if (!this.eventListeners.has(type)) {
-      this.eventListeners.set(type, new Set());
-    }
-    this.eventListeners.get(type)!.add(handler);
-  }
-
-  emit(type: 'message', message: Message) {
-    const set = this.eventListeners.get(type);
-    if (set) {
-      for (const handler of set) {
-        handler(message);
-      }
-    }
   }
 
   onConnected() {
@@ -162,44 +160,44 @@ export class Connection {
       case MessageType.CLIENT_INFO:
         this.clientId = message.clientId;
         break;
-      case MessageType.NETWORK:
+      case MessageType.NETWORK: {
         this.clients = message.clients;
 
-        for (const message of this.messageQueue) {
+        const queuedMessages = this.messageQueue;
+        this.messageQueue = [];
+        for (const message of queuedMessages) {
           this.send(message);
         }
-        this.messageQueue = [];
 
         for (const client of message.clients) {
           this.clientCache.set(client.clientId, client);
           if (this.targetMessageQueue.has(client.clientId)) {
-            const messages = this.targetMessageQueue.get(client.clientId)!;
+            const queuedMessages = this.targetMessageQueue.get(client.clientId)!;
             this.targetMessageQueue.delete(client.clientId);
-
-            for (const message of messages) {
+            for (const message of queuedMessages) {
               this.send(message);
             }
           }
         }
         break;
-      case MessageType.PING:
+      }
+      case MessageType.PING: {
         const pongMessage: PingMessageModel = {
           type: MessageType.PING,
-          timestamp: new Date().getTime(),
+          timestamp: Date.now(),
         };
         this.send(pongMessage);
         return;
+      }
       case MessageType.ENCRYPTED:
         if (!this.privateKey) {
           return;
         }
 
         try {
-          const json = JSON.parse(
-            (await RSA.decryptString(this.privateKey, message.payload))!
-          );
+          const json = JSON.parse((await RSA.decryptString(this.privateKey, message.payload))!);
 
-          if (json && json.type) {
+          if (json?.type) {
             if (message.clientId) {
               json.clientId = message.clientId;
             }

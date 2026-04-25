@@ -1,14 +1,14 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18not';
-import { observer } from 'mobx-react-lite';
 import clsx from 'clsx';
-
-import styles from './ChatItem.module.scss';
-import { ChatItemModel } from '../../types/Models.js';
-import { copy } from '../../utils/copy.js';
-import { TargetTile } from '../../components/TargetTile.js';
+import { observer } from 'mobx-react-lite';
+import type React from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18not';
 import { CopyButton } from '../../components/CopyButton.js';
+import { TargetTile } from '../../components/TargetTile.js';
 import { connection } from '../../stores/index.js';
+import type { ChatItemModel } from '../../types/Models.js';
+import { copy } from '../../utils/copy.js';
+import styles from './ChatItem.module.scss';
 
 export interface ChatItemProps {
   item: ChatItemModel;
@@ -20,6 +20,7 @@ const urlify = (text: string): React.ReactNode => {
   return text.split(urlRegex).map((part, i) => {
     if (part.match(urlRegex)) {
       return (
+        // biome-ignore lint: Index is fine.
         <a href={part} key={i}>
           {part}
         </a>
@@ -40,7 +41,7 @@ export const ChatItem: React.FC<ChatItemProps> = observer(({ item }) => {
     if (messageRef.current!.offsetHeight < 50) {
       setExpanded(true);
     }
-  }, [setExpanded]);
+  }, []);
 
   return (
     <li
@@ -51,9 +52,7 @@ export const ChatItem: React.FC<ChatItemProps> = observer(({ item }) => {
       <div className={styles.info}>
         {client && <TargetTile client={client} />}
         <div>{client?.clientName}</div>
-        <div>
-          {item.date.toLocaleTimeString(language, { timeStyle: 'short' })}
-        </div>
+        <div>{item.date.toLocaleTimeString(language, { timeStyle: 'short' })}</div>
         <CopyButton onClick={() => copy(item.message)} />
       </div>
       <div className={styles.message} ref={messageRef}>

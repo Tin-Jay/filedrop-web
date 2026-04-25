@@ -1,31 +1,18 @@
-import React, { useEffect } from 'react';
-import { IoClose } from 'react-icons/io5';
+import type React from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18not';
-
-import styles from './Modal.module.scss';
+import { IoClose } from 'react-icons/io5';
 import { IconButton } from './IconButton.js';
+import styles from './Modal.module.scss';
 import { Portal } from './Portal.js';
 
 export interface ModalProps {
   isOpen: boolean;
   title: string;
   onClose: () => void;
-  onSubmit?: (data: any, methods: { reset: () => void }) => void;
-  showCancelButton?: boolean;
-  submitButtonLabel?: React.ReactNode;
-  submitButtonVariant?: 'primary' | 'danger' | 'success';
-  isLoading?: boolean;
-  content?: React.ReactNode;
-  actions?: React.ReactNode;
-  secondaryActions?: React.ReactNode;
 }
 
-export const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
-  isOpen,
-  onClose,
-  title,
-  children,
-}) => {
+export const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({ isOpen, onClose, title, children }) => {
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -47,7 +34,7 @@ export const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
     <Portal isOpen={isOpen}>
       <div
         className={styles.overlay}
-        onClick={e => {
+        onClick={(e) => {
           if (e.target === e.currentTarget) {
             onClose();
           }

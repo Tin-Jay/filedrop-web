@@ -1,20 +1,19 @@
-import { makeAutoObservable, runInAction } from 'mobx';
-import { nanoid } from 'nanoid';
 import {
   ActionMessageActionType,
-  ActionMessageModel,
+  type ActionMessageModel,
   MessageType,
-  RTCCandidateMessageModel,
-  RTCDescriptionMessageModel,
+  type RTCCandidateMessageModel,
+  type RTCDescriptionMessageModel,
 } from '@filedrop/types';
-import { download, toString } from 'fitool';
-
+import { download, toString as fileToString } from 'fitool';
+import { fromImage } from 'imtool';
+import { makeAutoObservable, runInAction } from 'mobx';
+import { nanoid } from 'nanoid';
 import { TransferState } from '../types/TransferState.js';
-import type { NetworkStore } from './NetworkStore.js';
-import type { Connection } from './Connection.js';
 import { isClipboardItemSupported } from '../utils/browser.js';
 import { copy } from '../utils/copy.js';
-import { fromImage } from 'imtool';
+import type { Connection } from './Connection.js';
+import type { NetworkStore } from './NetworkStore.js';
 import { settingsStore } from './SettingsStore.js';
 
 export interface TransferSettings {
@@ -36,7 +35,7 @@ export class Transfer {
   startedAt?: number = undefined;
   state: TransferState;
   text?: string = undefined;
-  sortTimestamp: number = new Date().getTime();
+  sortTimestamp: number = Date.now();
 
   file: File | undefined;
   targetId: string;
@@ -50,11 +49,9 @@ export class Transfer {
   constructor(
     private network: NetworkStore,
     private connection: Connection,
-    settings: TransferSettings
+    settings: TransferSettings,
   ) {
-    this.state = settings.receiving
-      ? TransferState.INCOMING
-      : TransferState.OUTGOING;
+    this.state = settings.receiving ? TransferState.INCOMING : TransferState.OUTGOING;
 
     this.transferId = settings.transferId ?? nanoid();
     this.file = settings.file;
@@ -81,10 +78,7 @@ export class Transfer {
   }
 
   get isDone() {
-    return (
-      this.state === TransferState.COMPLETE ||
-      this.state === TransferState.FAILED
-    );
+    return this.state === TransferState.COMPLETE || this.state === TransferState.FAILED;
   }
 
   get canDownload() {
@@ -94,10 +88,7 @@ export class Transfer {
   get canCopy() {
     return (
       this.state === TransferState.COMPLETE &&
-      (!!this.text ||
-        (this.blob &&
-          this.fileType.startsWith('image/') &&
-          isClipboardItemSupported))
+      (!!this.text || (this.blob && this.fileType.startsWith('image/') && isClipboardItemSupported))
     );
   }
 
@@ -106,15 +97,11 @@ export class Transfer {
       await copy(this.text!);
     } else if (this.blob && this.fileType.startsWith('image/')) {
       if (this.fileType === 'image/png') {
-        await navigator.clipboard.write([
-          new ClipboardItem({ 'image/png': this.blob }),
-        ]);
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': this.blob })]);
       } else {
         await navigator.clipboard.write([
           new ClipboardItem({
-            'image/png': fromImage(this.blob).then(canvas =>
-              canvas.type('image/png').toBlob()
-            ),
+            'image/png': fromImage(this.blob).then((canvas) => canvas.type('image/png').toBlob()),
           }),
         ]);
       }
@@ -168,7 +155,7 @@ export class Transfer {
       return undefined;
     }
 
-    const now = new Date().getTime();
+    const now = Date.now();
     return (now - this.startedAt) / 1000;
   }
 
@@ -215,10 +202,7 @@ export class Transfer {
       type: MessageType.RTC_DESCRIPTION,
       transferId: this.transferId,
       targetId: this.targetId,
-      data: {
-        type: description.type,
-        sdp: description.sdp,
-      },
+      data: description.toJSON(),
     };
 
     this.connection.send(message);
@@ -247,7 +231,7 @@ export class Transfer {
 
   private stateConnected() {
     this.state = TransferState.CONNECTED;
-    this.startedAt = new Date().getTime();
+    this.startedAt = Date.now();
     this.moveToTop();
   }
 
@@ -257,34 +241,24 @@ export class Transfer {
   }
 
   private moveToTop() {
-    this.sortTimestamp = new Date().getTime();
+    this.sortTimestamp = Date.now();
   }
 
   private async textFromBlob(blob: Blob) {
-    if (
-      (this.fileType.startsWith('text/') || !this.fileType) &&
-      this.fileSize <= 10 * 1024 * 1024
-    ) {
-      const text = await toString(blob);
+    if ((this.fileType.startsWith('text/') || !this.fileType) && this.fileSize <= 10 * 1024 * 1024) {
+      const text = await fileToString(blob);
       runInAction(() => {
         this.text = text;
       });
     }
   }
 
-  async start(remoteDescription?: any) {
-    if (remoteDescription?.type === 'answer') {
-      this.validPeerConnection()
-        ?.setRemoteDescription(remoteDescription)
-        .catch(() => {});
-      return;
-    }
-
+  private createConnection() {
     const connection = new RTCPeerConnection(this.network.rtcConfiguration);
     this.peerConnection = connection;
 
-    connection.addEventListener('icecandidate', e => {
-      if (!e || !e.candidate) return;
+    connection.addEventListener('icecandidate', (e) => {
+      if (!e?.candidate) return;
 
       const message: RTCCandidateMessageModel = {
         type: MessageType.RTC_CANDIDATE,
@@ -298,17 +272,27 @@ export class Transfer {
 
     connection.addEventListener('iceconnectionstatechange', () => {
       if (
-        (connection.iceConnectionState === 'failed' ||
-          connection.iceConnectionState === 'disconnected') &&
+        (connection.iceConnectionState === 'failed' || connection.iceConnectionState === 'disconnected') &&
         !this.isDone
       ) {
         this.stateFailed();
       }
     });
 
+    return connection;
+  }
+
+  async start(remoteDescription?: RTCSessionDescriptionInit) {
+    if (remoteDescription?.type === 'answer') {
+      this.validPeerConnection()
+        ?.setRemoteDescription(remoteDescription)
+        .catch(() => {});
+      return;
+    }
+
     let lastUpdate = 0;
     const progressUpdate = (offset: number) => {
-      const now = new Date().getTime();
+      const now = Date.now();
 
       if (now - lastUpdate > 50) {
         lastUpdate = now;
@@ -317,6 +301,11 @@ export class Transfer {
     };
 
     if (this.receiving) {
+      if (!remoteDescription) {
+        return;
+      }
+
+      const connection = this.createConnection();
       await connection.setRemoteDescription(remoteDescription);
       const answer = await connection.createAnswer();
       await connection.setLocalDescription(answer);
@@ -325,13 +314,13 @@ export class Transfer {
       const buffer: BlobPart[] = [];
       let offset = 0;
 
-      connection.addEventListener('datachannel', event => {
+      connection.addEventListener('datachannel', (event) => {
         this.stateConnected();
 
         const channel = event.channel;
         channel.binaryType = 'arraybuffer';
 
-        channel.addEventListener('message', event => {
+        channel.addEventListener('message', (event) => {
           buffer.push(event.data);
           offset += event.data.byteLength;
           progressUpdate(offset);
@@ -353,6 +342,7 @@ export class Transfer {
         });
       });
     } else {
+      const connection = this.createConnection();
       const file = this.file!;
 
       connection.addEventListener('negotiationneeded', async () => {
@@ -376,7 +366,7 @@ export class Transfer {
           fileReader.readAsArrayBuffer(slice);
         };
 
-        fileReader.addEventListener('load', e => {
+        fileReader.addEventListener('load', (e) => {
           if (this.isDone) return;
           const buffer = e.target!.result as ArrayBuffer;
 

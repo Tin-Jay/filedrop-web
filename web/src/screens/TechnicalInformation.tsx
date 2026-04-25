@@ -1,9 +1,8 @@
-import React from 'react';
 import { observer } from 'mobx-react-lite';
-
-import * as browser from '../utils/browser.js';
+import type React from 'react';
 import { TextSection } from '../components/TextSection.js';
 import { connection } from '../stores/index.js';
+import * as browser from '../utils/browser.js';
 
 export const TechnicalInformation: React.FC = observer(() => {
   const remoteAddress = connection.remoteAddress;

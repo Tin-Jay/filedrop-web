@@ -1,10 +1,4 @@
-export function tryParse<T = any>(json: string): T | undefined {
-  try {
-    return JSON.parse(json);
-  } catch {}
-
-  return undefined;
-}
+import { tryParse } from './json';
 
 const PREFIX = 'filedrop_';
 
@@ -14,7 +8,7 @@ export function getItem<T>(name: string, fallbackValue: T): T {
     return fallbackValue;
   }
 
-  return tryParse(item) ?? fallbackValue;
+  return tryParse<T>(item) ?? fallbackValue;
 }
 
 export function setItem<T>(name: string, value: T): void {

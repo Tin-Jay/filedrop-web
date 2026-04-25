@@ -1,5 +1,5 @@
-import { DeviceType } from './DeviceType.js';
-import { MessageType, ActionMessageActionType } from './MessageType.js';
+import type { DeviceType } from './DeviceType.js';
+import type { ActionMessageActionType, MessageType } from './MessageType.js';
 
 export interface ClientModel {
   clientId: string;
@@ -57,7 +57,7 @@ export interface ClientInfoMessageModel extends MessageModel {
   suggestedClientName?: string;
   suggestedNetworkName?: string;
   localNetworks?: NetworkModel[];
-  rtcConfiguration?: any;
+  rtcConfiguration?: RTCConfiguration;
 }
 
 export interface LocalNetworksMessageModel extends MessageModel {
@@ -104,17 +104,18 @@ export interface PingMessageModel extends MessageModel {
 }
 
 export interface RTCMessageModel extends TargetedMessageModel {
-  data: any;
   transferId: string;
   clientId?: string;
 }
 
 export interface RTCDescriptionMessageModel extends RTCMessageModel {
   type: MessageType.RTC_DESCRIPTION;
+  data: RTCSessionDescriptionInit;
 }
 
 export interface RTCCandidateMessageModel extends RTCMessageModel {
   type: MessageType.RTC_CANDIDATE;
+  data: RTCIceCandidate;
 }
 
 export interface ChatMessageModel extends MessageModel {

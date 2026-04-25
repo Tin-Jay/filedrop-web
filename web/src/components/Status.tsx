@@ -1,10 +1,9 @@
-import React from 'react';
-import { useTranslation } from 'react-i18not';
-import { observer } from 'mobx-react-lite';
 import clsx from 'clsx';
-
-import styles from './Status.module.scss';
+import { observer } from 'mobx-react-lite';
+import type React from 'react';
+import { useTranslation } from 'react-i18not';
 import { connection } from '../stores/index.js';
+import styles from './Status.module.scss';
 
 export const Status: React.FC = observer(() => {
   const { t } = useTranslation();

@@ -1,23 +1,22 @@
-import React from 'react';
+import { observer } from 'mobx-react-lite';
+import type React from 'react';
 import { useTranslation } from 'react-i18not';
 import {
-  IoClose,
   IoArrowDown,
   IoArrowUp,
-  IoCaretUp,
   IoCaretDown,
+  IoCaretUp,
   IoCheckmark,
+  IoClose,
   IoHourglassOutline,
   IoLink,
 } from 'react-icons/io5';
-import { observer } from 'mobx-react-lite';
-
-import styles from './TransferTarget.module.scss';
-import { TransferState } from '../../../types/TransferState.js';
-import { Tooltip } from '../../../components/Tooltip.js';
 import { TargetTile } from '../../../components/TargetTile.js';
-import { Transfer } from '../../../stores/Transfer.js';
+import { Tooltip } from '../../../components/Tooltip.js';
 import { connection } from '../../../stores/index.js';
+import type { Transfer } from '../../../stores/Transfer.js';
+import { TransferState } from '../../../types/TransferState.js';
+import styles from './TransferTarget.module.scss';
 
 interface TransferIconProps {
   transfer: Transfer;
@@ -46,27 +45,25 @@ const stateIcon = (state: TransferState, receiving: boolean) => {
   }
 };
 
-export const TransferTarget: React.FC<TransferIconProps> = observer(
-  ({ transfer }) => {
-    const { t } = useTranslation();
-    const targetClient = connection.clientCache.get(transfer.targetId);
+export const TransferTarget: React.FC<TransferIconProps> = observer(({ transfer }) => {
+  const { t } = useTranslation();
+  const targetClient = connection.clientCache.get(transfer.targetId);
 
-    if (!targetClient) {
-      return null;
-    }
-
-    return (
-      <Tooltip content={t(`transferState.${transfer.state}`)}>
-        <TargetTile
-          className={styles.tile}
-          client={targetClient}
-          title={t('transfers.icon.state', {
-            state: t(`transferState.${transfer.state}`),
-          })}
-        >
-          {stateIcon(transfer.state, transfer.receiving)}
-        </TargetTile>
-      </Tooltip>
-    );
+  if (!targetClient) {
+    return null;
   }
-);
+
+  return (
+    <Tooltip content={t(`transferState.${transfer.state}`)}>
+      <TargetTile
+        className={styles.tile}
+        client={targetClient}
+        title={t('transfers.icon.state', {
+          state: t(`transferState.${transfer.state}`),
+        })}
+      >
+        {stateIcon(transfer.state, transfer.receiving)}
+      </TargetTile>
+    </Tooltip>
+  );
+});

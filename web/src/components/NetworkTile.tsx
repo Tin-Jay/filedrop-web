@@ -1,12 +1,11 @@
-import React from 'react';
+import type { ClientModel } from '@filedrop/types';
 import clsx from 'clsx';
+import type React from 'react';
 import { useTranslation } from 'react-i18not';
 import { IoAdd } from 'react-icons/io5';
-import { ClientModel } from '@filedrop/types';
-
+import { networkStore } from '../stores/index.js';
 import styles from './NetworkTile.module.scss';
 import { TargetTile } from './TargetTile.js';
-import { networkStore } from '../stores/index.js';
 
 interface NetworkTileProps {
   client: ClientModel;
@@ -14,11 +13,7 @@ interface NetworkTileProps {
   icon?: React.ReactNode;
 }
 
-export const NetworkTile: React.FC<NetworkTileProps> = ({
-  client,
-  onSelect,
-  icon,
-}) => {
+export const NetworkTile: React.FC<NetworkTileProps> = ({ client, onSelect, icon }) => {
   const { t } = useTranslation();
 
   const onDrop = (files: File[]) => {
@@ -44,7 +39,7 @@ export const NetworkTile: React.FC<NetworkTileProps> = ({
           <input
             type="file"
             tabIndex={0}
-            onChange={e => {
+            onChange={(e) => {
               if (e.target.files) {
                 onDrop([...e.target.files]);
               }
@@ -55,9 +50,7 @@ export const NetworkTile: React.FC<NetworkTileProps> = ({
             multiple
           />
         )}
-        <div className={styles.icon}>
-          {icon ? icon : <IoAdd className={styles.plus} />}
-        </div>
+        <div className={styles.icon}>{icon ? icon : <IoAdd className={styles.plus} />}</div>
       </TargetTile>
       <div className={styles.name}>{client.clientName}</div>
     </div>

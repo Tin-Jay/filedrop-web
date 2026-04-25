@@ -1,15 +1,9 @@
-import { makeAutoObservable } from 'mobx';
-import {
-  ChatMessageModel,
-  ClientModel,
-  Message,
-  MessageType,
-} from '@filedrop/types';
-import { nanoid } from 'nanoid';
-
-import type { Connection } from './Connection.js';
-import { ChatItemModel } from '../types/Models.js';
+import { type ChatMessageModel, type ClientModel, type Message, MessageType } from '@filedrop/types';
 import { t } from 'i18not';
+import { makeAutoObservable } from 'mobx';
+import { nanoid } from 'nanoid';
+import type { ChatItemModel } from '../types/Models.js';
+import type { Connection } from './Connection.js';
 
 interface ChatChannel {
   channel: string;
@@ -36,22 +30,17 @@ export class ChatStore {
   constructor(private connection: Connection) {
     makeAutoObservable(this);
 
-    connection.on('message', message => this.onMessage(message as any));
+    connection.on('message', (message) => this.onMessage(message));
   }
 
   get unread() {
-    return [...this.unreadCount.values()].reduce(
-      (total, current) => total + current,
-      0
-    );
+    return [...this.unreadCount.values()].reduce((total, current) => total + current, 0);
   }
 
   get currentChannelName() {
     return this.currentChannel === 'global'
       ? t('chat.everyone')
-      : this.connection.clients.find(
-          client => client.clientId === this.currentChannel
-        )?.clientName || '';
+      : this.connection.clients.find((client) => client.clientId === this.currentChannel)?.clientName || '';
   }
 
   get channels(): ChatChannel[] {
@@ -65,13 +54,13 @@ export class ChatStore {
 
     channels.push(
       ...this.connection.clients
-        .filter(client => client.clientId !== this.connection.clientId)
-        .map(client => ({
+        .filter((client) => client.clientId !== this.connection.clientId)
+        .map((client) => ({
           channel: client.clientId,
           name: client.clientName || '',
           unread: this.unreadCount.get(client.clientId) || 0,
           client,
-        }))
+        })),
     );
 
     for (const key of this.channelItems.keys()) {
@@ -79,7 +68,7 @@ export class ChatStore {
         continue;
       }
 
-      if (!channels.find(channel => channel.channel === key)) {
+      if (!channels.find((channel) => channel.channel === key)) {
         const cached = this.connection.clientCache.get(key);
         if (!cached) {
           continue;
@@ -127,9 +116,7 @@ export class ChatStore {
   sendChatMessage(body: string) {
     const direct = this.currentChannel !== 'global';
     const clients = direct
-      ? this.connection.clients.filter(
-          client => client.clientId === this.currentChannel
-        )
+      ? this.connection.clients.filter((client) => client.clientId === this.currentChannel)
       : this.connection.clients;
 
     for (const client of clients) {
@@ -149,11 +136,7 @@ export class ChatStore {
   async onMessage(message: Message) {
     switch (message.type) {
       case MessageType.CHAT:
-        this.pushMessage(
-          message.direct ? message.clientId! : 'global',
-          message.clientId!,
-          message.message
-        );
+        this.pushMessage(message.direct ? message.clientId! : 'global', message.clientId!, message.message);
         break;
     }
   }
