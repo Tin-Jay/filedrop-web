@@ -2,7 +2,11 @@ import preact from '@preact/preset-vite';
 import { execSync } from 'child_process';
 import { defineConfig } from 'vite';
 
-const gitRevision = execSync('git rev-parse --short HEAD').toString().trim();
+let gitRevision = 'unknown';
+
+try {
+  gitRevision = execSync('git rev-parse --short HEAD').toString().trim();
+} catch {}
 
 export default defineConfig(({ mode }) => ({
   server: {
