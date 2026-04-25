@@ -23,7 +23,6 @@ dist
 # database
 *.db
 *.db-journal
-.eslintcache
 compose.yaml
 
 .pnp.cjs

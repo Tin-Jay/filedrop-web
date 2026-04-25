@@ -12,7 +12,7 @@
     "build": "corepack yarn workspaces foreach -Aipt run build",
     "start:prod": "corepack yarn workspace @filedrop/ws run start:prod",
     "test": "vitest",
-    "lint": "corepack yarn workspaces foreach -Aipt run lint"
+    "lint": "npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off --max-diagnostics=50 ."
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.13",

@@ -4,8 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "lint": "eslint . --ext ts,tsx"
+    "build": "tsc"
   },
   "module": "build/index.js",
   "main": "build/index.js",
