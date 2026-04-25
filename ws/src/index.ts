@@ -90,9 +90,8 @@ app.get('/manifest.json', (_, res) => {
 });
 
 app.register(fastifyWebsocket);
-app.register(async function (fastify) {
-  fastify.get('/ws', { websocket: true }, (connection, req) => {
-    const ws = connection.socket;
+app.register(async fastify => {
+  fastify.get('/ws', { websocket: true }, (ws, req) => {
     const client = new WSClient(ws, req);
 
     clientManager.sendAppInfo(client);

@@ -15,7 +15,7 @@
     "vite-bundle-visualizer": "^1.2.1"
   },
   "dependencies": {
-    "@filedrop/types": "*",
+    "@filedrop/types": "workspace:^",
     "@types/react": "^18.2.31",
     "@types/react-dom": "^18.2.14",
     "base64-js": "^1.5.1",
