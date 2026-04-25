@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
-import buildInfo from 'vite-plugin-info';
+import { execSync } from 'child_process';
+
+const gitRevision = execSync('git rev-parse --short HEAD').toString().trim();
 
 export default defineConfig(({ mode }) => ({
   server: {
@@ -17,5 +19,8 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: './build',
   },
-  plugins: [buildInfo(), preact()],
+  define: {
+    GIT_COMMIT_SHA: JSON.stringify(gitRevision),
+  },
+  plugins: [preact()],
 }));
