@@ -24,6 +24,9 @@ document.addEventListener(
   },
   { passive: false },
 );
+document.addEventListener('dblclick', (event) => {
+  event.preventDefault();
+});
 
 pwanow({
   backgroundColor: '#1b1b1d',

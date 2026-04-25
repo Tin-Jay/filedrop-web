@@ -103,9 +103,10 @@ export const ChatSection: React.FC = observer(() => {
           <div className={styles.items}>
             <div className={styles.placeholder} />
             <ul ref={containerRef}>
-              {chat.map((item) => (
-                <ChatItem key={item.id} item={item} />
-              ))}
+              {chat.map((item, index) => {
+                const previousItem = chat[index - 1];
+                return <ChatItem key={item.id} item={item} compact={previousItem?.clientId === item.clientId} />;
+              })}
             </ul>
           </div>
         )}

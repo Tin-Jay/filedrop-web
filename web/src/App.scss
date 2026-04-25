@@ -88,6 +88,7 @@ button {
   -webkit-text-size-adjust: none;
   -webkit-touch-callout: none;
   user-select: none;
+  touch-action: manipulation;
 }
 
 a {

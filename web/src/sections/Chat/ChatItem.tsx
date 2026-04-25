@@ -12,12 +12,13 @@ import styles from './ChatItem.module.scss';
 
 export interface ChatItemProps {
   item: ChatItemModel;
+  compact?: boolean;
 }
 
-const urlify = (text: string): React.ReactNode => {
+const Urlify: React.FC<{ children: string }> = ({ children }) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-  return text.split(urlRegex).map((part, i) => {
+  return children.split(urlRegex).map((part, i) => {
     if (part.match(urlRegex)) {
       return (
         // biome-ignore lint: Index is fine.
@@ -31,7 +32,7 @@ const urlify = (text: string): React.ReactNode => {
   });
 };
 
-export const ChatItem: React.FC<ChatItemProps> = observer(({ item }) => {
+export const ChatItem: React.FC<ChatItemProps> = observer(({ item, compact }) => {
   const { t, language } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const messageRef = useRef<HTMLDivElement>(null);
@@ -47,16 +48,25 @@ export const ChatItem: React.FC<ChatItemProps> = observer(({ item }) => {
     <li
       className={clsx(styles.item, {
         [styles.expanded]: expanded,
+        [styles.compact]: compact,
       })}
     >
-      <div className={styles.info}>
-        {client && <TargetTile client={client} />}
-        <div>{client?.clientName}</div>
-        <div>{item.date.toLocaleTimeString(language, { timeStyle: 'short' })}</div>
-        <CopyButton onClick={() => copy(item.message)} />
-      </div>
+      {!compact && (
+        <div className={styles.info}>
+          <div className={styles.left}>
+            {client && <TargetTile client={client} />}
+            <div>{client?.clientName}</div>
+          </div>
+          <div className={styles.right}>
+            <div>{item.date.toLocaleTimeString(language, { timeStyle: 'short' })}</div>
+          </div>
+        </div>
+      )}
       <div className={styles.message} ref={messageRef}>
-        {urlify(item.message)}
+        <Urlify>{item.message}</Urlify>
+        <div className={styles.actions}>
+          <CopyButton onClick={() => copy(item.message)} />
+        </div>
       </div>
       {!expanded && (
         <button className={styles.more} onClick={() => setExpanded(true)}>
