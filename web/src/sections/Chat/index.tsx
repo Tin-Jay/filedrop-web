@@ -7,6 +7,7 @@ import { IoChatbox, IoClipboard, IoGlobe, IoSend } from 'react-icons/io5';
 import { IconButton } from '../../components/IconButton.js';
 import { NotificationCount } from '../../components/NotificationCount.js';
 import { TargetTile } from '../../components/TargetTile.js';
+import { maxChatMessageLength } from '../../config.js';
 import { applicationStore, chatStore } from '../../stores/index.js';
 import { ChatItem } from './ChatItem.js';
 import styles from './index.module.scss';
@@ -117,6 +118,7 @@ export const ChatSection: React.FC = observer(() => {
           placeholder={t('chat.message', {
             target: chatStore.currentChannelName,
           })}
+          maxLength={maxChatMessageLength}
         />
         {applicationStore.showPaste && (
           <IconButton

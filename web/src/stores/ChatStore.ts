@@ -2,6 +2,7 @@ import { type ChatMessageModel, type ClientModel, type Message, MessageType } fr
 import { t } from 'i18not';
 import { makeAutoObservable } from 'mobx';
 import { nanoid } from 'nanoid';
+import { maxChatMessageLength } from '../config.js';
 import type { ChatItemModel } from '../types/Models.js';
 import type { Connection } from './Connection.js';
 
@@ -123,7 +124,7 @@ export class ChatStore {
       const message: ChatMessageModel = {
         type: MessageType.CHAT,
         targetId: client.clientId,
-        message: body,
+        message: body.trim().substring(0, maxChatMessageLength),
         direct,
       };
 
